@@ -1,4 +1,4 @@
-import logging
+import os
 
 import numpy as np
 from colorama import init, Fore
@@ -8,44 +8,51 @@ from solver import Figure
 init(autoreset=True)
 
 FILL_CHAR = "\u25FC"
-EMPTY_CELL_CHAR = "\u00B7"
 
 
-def print_array(
-        ar: np.ndarray,
-        fore_color: str | None = None,
-        is_debug=False,
+def clear_terminal():
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
+
+
+def print_puzzle(
+    puzzle: np.ndarray,
+    figures: list[Figure],
+    clear_screen: bool = True,
 ) -> None:
-    for line in ar:
-        line_str = ""
-        for el in line:
-            ch = str(el)
-            line_str = "{0}{1}{2:>3s}".format(
-                line_str,
-                fore_color or "",
-                ch,
-            )
-        if is_debug:
-            logging.debug(line_str)
-        else:
-            logging.info(line_str)
+    if clear_screen:
+        clear_terminal()
 
-
-def print_solution(ar: np.ndarray, figures: list[Figure]) -> None:
     figures_map = {figure.index: figure for figure in figures}
-    for line in ar:
+
+    for line in puzzle:
         line_str = ""
-        for el in line:
+        for index, el in enumerate(line):
             match el:
                 case -1:
                     ch = "{0}{1}".format(
                         Fore.RESET,
-                        EMPTY_CELL_CHAR,
+                        "·",
+                    )
+                case 0:
+                    ch = "{0}{1}".format(
+                        Fore.RESET,
+                        " ",
                     )
                 case _:
                     ch = "{0}{1}".format(
                         figures_map[el].color,
                         FILL_CHAR,
                     )
-            line_str = "{0}{1}".format(line_str, ch)
-        logging.info(line_str)
+
+            line_str = "{0}{1}{2}{3}".format(
+                line_str,
+                "{0}|".format(Fore.BLACK),
+                ch,
+                "{0}|".format(Fore.BLACK) if index == len(line) - 1 else "",
+            )
+
+        print(line_str)
+    print()

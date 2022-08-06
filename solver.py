@@ -62,14 +62,13 @@ class PuzzleSolver:
                 )
 
                 logging.debug("input")
-                ui.print_array(puzzle, is_debug=True)
+                ui.print_puzzle(puzzle, self._figures)
                 logging.debug("-" * 5)
-                ui.print_array(shape, fore_color=figure.color, is_debug=True)
 
                 new_puzzle = self._place_shape(figure, shape, puzzle)
                 if new_puzzle is not None:
                     logging.debug("output")
-                    ui.print_array(new_puzzle, is_debug=True)
+                    ui.print_puzzle(new_puzzle, self._figures)
 
                     logging.debug("--- success ---")
                     new_figures = [
@@ -77,8 +76,6 @@ class PuzzleSolver:
                         for new_figure in figures
                         if new_figure != figure
                     ]
-
-                    # logging.debug("puzzle solved: {0}".format(self._puzzle_is_solved(new_puzzle)))
 
                     if not new_figures and self._puzzle_is_solved(new_puzzle):
                         raise PuzzleSolvedError(new_puzzle)

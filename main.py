@@ -1,16 +1,28 @@
 import json
 import logging
+import random
+from argparse import ArgumentParser
 
 import numpy as np
-from blessed import Terminal
 from colorama import ansi
 
 import ui
 from solver import Figure, PuzzleSolver
 
+parser = ArgumentParser()
+parser.add_argument(
+    "-f",
+    "--file",
+    dest="filename",
+    required=True,
+    help="write report to FILE",
+    metavar="FILE",
+)
+
+args = parser.parse_args()
+
 logging.basicConfig(
-    # level=logging.INFO,
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(message)s",
 )
 
@@ -19,11 +31,10 @@ COLORS = [
     for name in dir(ansi.Fore)
     if not name.startswith("_")
 ]
+random.shuffle(COLORS)
 
-with open("puzzle.json") as file_ptr:
+with open(args.filename) as file_ptr:
     puzzle_data = json.load(file_ptr)
-
-
 
 puzzle = np.array(puzzle_data["puzzle"])
 puzzle[puzzle == 1] = -1
@@ -54,29 +65,13 @@ for figure_index, figure_data in enumerate(puzzle_data["figures"]):
         )
     )
 
-logging.info("# PUZZLE")
-ui.print_array(puzzle)
-
-logging.info("# FIGURES")
-for figure in figures:
-    logging.info("## figure №{0}".format(figure.index))
-    logging.info("-" * 10)
-    logging.info("### source shape")
-    logging.info("-" * 5)
-    ui.print_array(figure.source_shape, fore_color=figure.color)
-    logging.info("### variants")
-    for shape in figure.shapes:
-        ui.print_array(shape, fore_color=figure.color)
-        logging.info("-" * 5)
-    logging.info("-" * 10)
-
-# exit(1)
+ui.print_puzzle(puzzle, figures)
 
 solver = PuzzleSolver(puzzle, figures)
 solution = solver.solve()
 if solution is not None:
-    logging.info("solution found!!!")
-    # ui.print_array(solution)
-    ui.print_solution(solution, figures)
+    ui.clear_terminal()
+    print("solution:")
+    ui.print_puzzle(solution, figures, clear_screen=False)
 else:
-    logging.info("solution is not found")
+    print("solution is not found")
