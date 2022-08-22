@@ -1,4 +1,5 @@
 import logging
+import random
 from dataclasses import dataclass
 
 import numpy as np
@@ -24,12 +25,22 @@ class PuzzleSolvedError(Exception):
         return self._solved_puzzle
 
 
+@dataclass()
+class PuzzleSolution:
+    solved_puzzle: np.ndarray
+    iterations: int
+
+
 class PuzzleSolver:
     def __init__(self, puzzle: np.ndarray, figures: list[Figure]):
         self._puzzle = puzzle
         self._figures = figures
+        self._iteration_count = 0
 
-    def solve(self) -> np.ndarray:
+    def solve(self) -> PuzzleSolution:
+        self._iteration_count = 0
+        random.shuffle(self._figures)
+
         try:
             self._start_iteration(
                 1,
@@ -37,14 +48,19 @@ class PuzzleSolver:
                 self._figures,
             )
         except PuzzleSolvedError as err:
-            return err.get_puzzle()
+            return PuzzleSolution(
+                solved_puzzle=err.get_puzzle(),
+                iterations=self._iteration_count,
+            )
 
     def _start_iteration(
-            self,
-            iteration_index: int,
-            puzzle: np.ndarray,
-            figures: list[Figure],
+        self,
+        iteration_index: int,
+        puzzle: np.ndarray,
+        figures: list[Figure],
     ):
+        self._iteration_count += 1
+
         logging.debug(
             "***** start iteration [{0}]. figures: {1} *****".format(
                 iteration_index,
@@ -62,7 +78,6 @@ class PuzzleSolver:
                 )
 
                 logging.debug("input")
-                ui.print_puzzle(puzzle, self._figures)
                 logging.debug("-" * 5)
 
                 new_puzzle = self._place_shape(figure, shape, puzzle)
@@ -90,10 +105,10 @@ class PuzzleSolver:
                     logging.debug("--- fail ---")
 
     def _place_shape(
-            self,
-            figure: Figure,
-            shape: np.ndarray,
-            puzzle: np.ndarray,
+        self,
+        figure: Figure,
+        shape: np.ndarray,
+        puzzle: np.ndarray,
     ) -> np.ndarray | None:
         puzzle = puzzle.copy()
 
@@ -126,8 +141,8 @@ class PuzzleSolver:
         return puzzle
 
     def _get_puzzle_top_left(
-            self,
-            puzzle: np.ndarray,
+        self,
+        puzzle: np.ndarray,
     ) -> tuple[int, int] | None:
         for x in range(puzzle.shape[0]):
             for y in range(puzzle.shape[1]):

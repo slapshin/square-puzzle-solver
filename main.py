@@ -72,6 +72,7 @@ solution = solver.solve()
 if solution is not None:
     ui.clear_terminal()
     print("solution:")
-    ui.print_puzzle(solution, figures, clear_screen=False)
+    ui.print_puzzle(solution.solved_puzzle, figures, clear_screen=False)
+    print("iterations: {0}".format(solution.iterations))
 else:
     print("solution is not found")
