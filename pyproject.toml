@@ -8,7 +8,6 @@ authors = ["Stanislav Lapshin <sm.lapshin@gmail.com>"]
 python = "^3.10"
 numpy = "^1.23.0"
 colorama = "^0.4.5"
-blessed = "^1.19.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
