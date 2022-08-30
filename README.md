@@ -15,11 +15,10 @@ poetry install
 ## Configuration
 Before start the solver you should prepare configuration.
 
+**Example:**
 ```json
 {
-  // "puzzle" - the puzzle to solve. 
-  // 0 - free places which should be filled
-  // 1 - filled in places
+ 
   "puzzle": [
     [0,0,1,1],
     [1,0,0,0],
@@ -27,9 +26,6 @@ Before start the solver you should prepare configuration.
     [1,1,1,0],
     [1,1,1,0]
   ],
-  // "figures" - contours of shapes involved in filling in
-  // 0 - free places
-  // 1 - filled in places
   "figures": [
     [
       [1,1],
@@ -44,6 +40,13 @@ Before start the solver you should prepare configuration.
   ]
 }
 ```
+**puzzle** - the puzzle to solve. 
+- **0** - free places which should be filled
+- **1** - filled in places
+
+**figures** - contours of shapes involved in filling in
+- **0** - free places
+- **1** - filled in places
 
 ## Run 
 
